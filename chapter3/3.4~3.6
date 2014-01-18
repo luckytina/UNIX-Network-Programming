@@ -1,0 +1,54 @@
+3.4 字节排序函数
+
+小端和大端
+小端：将低序字节存储在起始位置
+大端：将高序字节存储在起始位置
+
+为了测试本机是小端还是大端写了简单的程序testByteOrder.cpp具体见本文件夹
+经过测试本机属于小端
+
+我们还需关注如何在主机字节序和网络字节序之间的相互转换，这两种字节序之间的相互转化可以使用如下4个函数。
+#include <netinet/in.h>
+
+uint16_t htons(uint16_t host16bitvalue);
+uint32_t htonl(uint32_t host32bitvalue);
+
+uint16_t ntohs(uint16_t net16bitvalue);
+uint32_t ntohs(uint32_t net32bitvalue);
+
+在这些函数名总n代表网络，h代表主机
+
+3.5字节操纵函数
+#include <string.h>
+void bzero(void *dest, size_t nbytes);     //把指定的字节数设置为0
+
+void bcopy(const void *src, void *dest, size_t nbytes);
+
+int bcmp(const void *prt1, const void *ptr2, size_t nbytes);
+
+ANSI C函数
+#include<string.h>
+
+void *memset(void *dest, int c, size_t len);
+void *memcpy(void *dest, const void *src, size_t nbytes);
+int memcmp(const void *ptr1, const void *ptr2,size_t nbytes);
+
+
+3.6 inet_aton  inet_addr 和inet_ntoa函数
+这两组地址转换函数。他们是ASCII字符串与网络字节序的二进制值之间转换网际地址
+（1）inet_aton inet_addr inet_ntoa  在点分是进制数串与它长度为32位的网络字节序二进制值间转换IPv4地址。
+（2）两个比较新的函数inet_pton和inet_ntop对于IPv4和IPv6都合适。
+#include <arpa/inet.h>
+
+int inet_aton(const char *strptr,struct in_addr *addrptr);
+inet_aton将strptr所指的c字符串转换成一个32位的网络字节序的二进制值，并通过addrptr来存储。如果成功则返回1否则返回0
+
+in_addr_t inet_addr(const char *strptr);
+
+char *inet_ntoa(struct in_addr inaddr);
+
+
+
+
+
+
