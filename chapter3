@@ -7,4 +7,5 @@ struct in_addr
 {
 		in_addr_t s_addr;
 };
-在其中in_addr_r一般为uint32_t(位整数，包含在头文件<sys/types.h>中)
+在其中in_addr_r一般为uint32_t(位整数，包含在头文件<sys/types.h>中)包含在头文件<netinet/in.h>中
+struct 
