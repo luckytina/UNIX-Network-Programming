@@ -1,0 +1,48 @@
+chapter4
+基本tcp套接字编程
+
+4.1 概述
+（略）
+
+4.2 scoket函数
+为了执行网络I/O,一个进程必须做到第一件事就是调用scoket函数，指定期望通信的类型
+#include <sys/socket.h>
+int socket(int family, int type, int protocol)
+其中family指明的是协议簇，如下图所示的类型
++-------------+--+-------------+
+|       family   |  说明       |
+|     AF_INET    |  IPv4协议   |
+|     AF_INT6    |  IPv6协议   |
+|     AF_LOCAL   |  Unix协议域 |
+|     AF_ROUTER  |  路由套接字 |
+|     AF_KEY     |  秘钥套接字 |
++----------------+-------------+
++------------------+--------------+
+|                  |              |
+|   	type	   |说明          |
++------------------+--------------+
+|   SOCK_STREAM	   |字节流套接字  |
+|   SOCK_DGRAM	   |数据报套接字  |
+|   SOCK_SEQPACKET |有序分组套接字|
+|   SOCK_RAW	   |原始套接字    |
++------------------+--------------+
+ +---------------+---------------+
+ |  	protocol |  	说明     |
+ +---------------+---------------+
+ |  IPPROTO_CP	 |  TCP传输协议  |
+ |  IPPROTO_UDP	 |  UDP传输协议  |
+ |  IPPROTO_SCTP |  SCTP传输协议 |
+ +---------------+---------------+
+
+4.3 connect函数
+#include<sys/scoket.h>
+int connect(int sockfd, const struct sockaddr *servaddr, socklen_t addrlen);
+其中sockfd是由socket函数返回的套接字描述符，第二个和第三个参数分别表示指向套接字地址结构的指针
+和该结构的大小
+在调用connect函数时将激发tcp的三次握手过程
+（1）TCP客户没有收到SYN分节的响应，则返回ETIMEOUT错误。
+（2）如果对客户的SYN的响应是RST，则表明该服务器主机在我们指定的端口上没有进程等待在与之连接。
+（3）如果客户发出的SYN在中间的一个路由器上引发了一个"destination unreachable"的ICMP错误
+
+
+

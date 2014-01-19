@@ -1,0 +1,26 @@
+4.4 bind函数
+bind函数把一个本地协议地址赋予给一个套接字。
+#include<sys/socket.h>
+int bind(int sockfd, const struct sockaddr *myaddr, socklen_t addlen);
+
+4.5 listen函数
+listen函数仅有TCP服务器调用，它做了两件事。
+（1）当socket函数创建一个套接字时，它被假设为一个主动套接字，也就是说它是一个将调用connect发起连接的客户套接字。
+listen函数把一个未连接的套接字转换成一个被动套接字，指示内核应该接受指向该套接字的连接请求。
+#include <sys/socket.h>
+int listen(int sockfd, int backlog);
+
+为了理解backlog参数我们必须认识到内核为任何一个给定的监听套接字维护两个队列：
+（1）未完成的队列，每个这样的SYN分节对应其中一项：已由一个各户发出并到达服务器，而服务器正在等待完成相应的TCP三次
+握手过程。这些套接字处于SYN_RCVD状态
+（2）已完成连接队列，每个已完成TCP三次握手过程的客户对应其中一项
+
+4.6 accept函数
+accept函数由TCP服务器调用，用于从已完成连接队列的队头返回下一个已完成的连接。如果已完成的队列为空，那么就投入睡眠
+#includ <sys/socket.h>
+int accept(int sockfd, struct sockaddr *cliaddr, socklen_t *addlen);
+如果返回成功那么返回值是由内核自动生成的一个全新描述符，代表与所返回客户的TCP连接。在讨论accept函数时我们称它的第一个参数为
+监听套接字描述符，称其返回值为已连接套接字描述符。区分这两个套接字非常重要。一个服务器仅仅创建一个监听套接字，它在该服务器
+生命周期一直存在。内核为每个由服务器进程接受的客户连接创建一个已连接的套接字。当服务器完成给定客户的服务时，相应的已连接的
+套接字就关闭。
+
