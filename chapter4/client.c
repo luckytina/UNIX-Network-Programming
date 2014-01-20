@@ -1,4 +1,5 @@
 #include <stdio.h>
+#include <unistd.h>
 #include <stdlib.h>
 #include <time.h>
 #include <sys/socket.h>
@@ -20,7 +21,9 @@ int main(int argc, char **argv)
     bzero(&servaddr, sizeof(servaddr));
     servaddr.sin_family = AF_INET;
     servaddr.sin_port = htons(13);
-    inet_pton(AF_INET, "10.180.35.41", &servaddr.sin_addr);
+	printf("1");
+    inet_pton(AF_INET, "10.140.48.49", &servaddr.sin_addr);
+	printf("2");
     connect(sockfd, (struct sockaddr *)&servaddr, sizeof(servaddr));
     
     while ((n = read(sockfd, recvline, MAXLINE)) > 0) {

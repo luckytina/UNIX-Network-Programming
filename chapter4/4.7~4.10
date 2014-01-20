@@ -1,0 +1,96 @@
+4.7 fork和exec函数
+fork是unix中派生新进行的唯一方法
+#include <unistd.h>
+pid_t fork(void);
+
+4.8 并发服务器
+如下是并发服务器的程序轮廓
+pid_t pid;
+int listenfd, connfd;
+listenfd = listen(...);
+bind(listenfd, ...);
+listen(listenfd,LISTENQ);
+for(;;)
+{
+		connfd = accept(listenfd,...);
+		if((pid = fork()) == 0)
+		{
+				close(listenfd);
+				doit(connfd);
+				close(connfd);
+				exit(0);
+		}
+		
+		close(connfd);
+}
+
+  
+    	客户                   服务器
+                                    
+   +----------+           +----------+
+   |connect() |-----------+ listenfd |
+   |          |           |          |
+   +----------+           +----------+
+        accept返回前客户/服务器的状态
+
+ 
+        客户                    服务器
+   +---------+                +----------+
+   |connect()|                | listenfd |
+   |         |                |          |
+   +---------+----------------+ connfd   |
+                              +----------+
+        accept返回后客户/服务器状态
+
+并发服务器下一步调用的是fork，如下图fork返回后的状态
+
+
+        客户                    服务器（父进程）
+
+ +-----------------+         +------------------+
+ |      connect()  |         |  listenfd        |
+ |                 | 连接    |                  |
+ +-----------------+--+------+  connfd          |
+                      |      +------------------+
+                      |               |
+                      |               | 
+                      |               | fork
+                      |         服务器| （子进程）
+                      |               |
+                      |       +-------+--------+
+                      |       | listenfd       |
+                      |       |                |
+                      +-------+ connfd         |
+                              +----------------+
+                fork后返回客户/服务器的状态
+
+        客户                    服务器（父进程）
+
+      +----------+            +----------+
+      | connect()|            | listenfd |
+      |          +-----+      |          |
+      +----------+     |      +----------+
+                       |      
+                       |      
+                       |        
+                       |
+                       |        服务器（子进程）
+                       |
+                       |     +----------+
+                       +----++  connfd  |
+                             |          |
+                             +----------+
+                               
+4.9 close函数
+通常用close函数来关闭套接字，并终止tcp连接
+#include <unistd.h>
+int close(int sockfd);
+
+4.10 getsockname和getpeername函数
+这两个函数或者返回与一个套接字关联的本地协议地址，或者返回与一个套接字相连的外地协议地址
+#include <sys/socket.h>
+int getsockname(int sockfd, struct sockaddr *localaddr, socklen_t *addrlen);
+int getpeername(int sockfd, struct sockaddr *localaddr, socklen_t *addrlen);
+在一个没有调用bind的tcp客户上，connect成功返回后，getsockname用于返回本地IP地址和本地端口号
+在以端口号为0调用本地bind后，getsockname用于返回由内核分配的本地端口号
+
