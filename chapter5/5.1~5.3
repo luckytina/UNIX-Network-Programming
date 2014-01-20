@@ -1,0 +1,13 @@
+							chapter5 客户/服务器程序示例
+5.1概述
+
+5.2 TCP回射服务器程序：mian函数
+tcp回射服务器函数见server.c文件
+
+5.3 TCP回射服务程序：str_echo函数
+str_echo函数执行处理每个客户的服务：从客户读入数据，并把它回射给客户
+具体函数见server.c文件
+
+小结：在tcp回射服务程序中首先得注意的是套接字地址结构sockaddr_in,然后就是socket
+要注意这两者之间的关系，然后就是bind listen accept 等等
+
