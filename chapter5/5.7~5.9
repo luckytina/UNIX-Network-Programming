@@ -12,8 +12,19 @@
 （7）进程终止处理的另一部分是：在服务器子进程终止时，给父进程发送一个SIGCHLD的信号。
 
 5.8 POSIX信号处理
+信号就是告知一个进程发生了一个事件的通知，有时也成为软中断。信号通常是异步发生的，也就是说通常不知道信号的准确发生时刻。
+信号可以是：
+（1）由一个进程发给另一个进程
+（2）由内核发给一个进程
+
 
 
 5.9 处理SIGCHLD信号
+
+5.10 wait和waitpid函数
+我们可以调用wait函数来处理已终止的子进程
+#include <sys/wait.h>
+pid_t wait(int *statloc);
+pid_t waitpid(pid_t pid, int *statloc, int options);
 
 
