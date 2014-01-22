@@ -1,0 +1,18 @@
+char *fgets(char *s, int size, FILE *stream);
+       fgets()  reads  in  at most one less than size characters from stream and stores them
+       into the buffer pointed to by s.  Reading stops after an EOF or a newline.  If a new-
+       line  is read, it is stored into the buffer.  A '\0' is stored after the last charac-
+       ter in the buffer.
+
+
+读函数read  
+ssize_t read(int fd,void *buf,size_t nbyte) 
+read函数是负责从fd中读取内容.成功时,read返回实际所读的字节数,如果返回的值是0,表示已经读到文件的结束了.
+小于0表示出现了错误.如果错误为EINTR说明读是由中断引起的, 如果是ECONNREST表示网络连接出了问题.
+写函数write  
+ssize_t write(int fd,const void *buf,size_t nbytes) 
+write函数将buf中的nbytes字节内容写入文件描述符fd.成功时返回写的字节数.失败时返回-1. 并设置errno变量. 在网络程序中,当我们向套接字文件描述符写时有俩种可能.  
+1)write的返回值大于0,表示写了部分或者是全部的数据.  
+2)返回的值小于0,此时出现了错误.我们要根据错误类型来处理.  如果错误为EINTR表示在写的时候出现了中断错误.  
+如果为EPIPE表示网络连接出现了问题(对方已经关闭了连接).
+ 
