@@ -32,7 +32,7 @@ int main(int argc,char *argv[])
 	bzero(&cliaddr,sizeof(struct sockaddr_in));
 	cliaddr.sin_family=AF_INET;
 	cliaddr.sin_port=htons(9877);
-	cliaddr.sin_addr.s_addr=inet_addr("10.180.37.52");
+	cliaddr.sin_addr.s_addr=inet_addr("10.140.48.49");
 	if(connect(connfd,(struct sockaddr*)&cliaddr,sizeof(cliaddr)))
 	{
 		printf("connect error!\r\n");
