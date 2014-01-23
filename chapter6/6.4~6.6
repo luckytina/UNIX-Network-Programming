@@ -1,0 +1,55 @@
+6.4 str_cli函数（修订版）
+代码如下：
+void str_cli(FILE *fp, int sockfd)
+{
+		int		maxfdp1;
+		fd_set  rset;										//包含在头文件<sys/select.h>文件中
+		char    sendline[MAXLINE], recvline[MAXLINE];
+		FD_ZERO(rset);
+		for(;;)
+		{
+				FD_SET(fileno(fp), &rset);
+				FD_SET(sockfd, &rset);
+				maxfdp1 = max(fileno(dp), sockfd) + 1;
+				select(maxfdp1, &rset, NULL, NULL, NULL);
+				if(FD_ISSET(sockfd, &rset))
+				{
+						if(read(sockfd, recvline, MAXLINE) <= 0)
+								exit(1);
+						fputs(recvline, stdout);
+				}
+
+				if(FD_ISSET(fileno(fp)), &rset)
+				{
+						if(fgets(sendline, MAXLINE, fp) == NULL)
+								return;
+						write(scokfd, sendline, strlen(sendline));
+				}
+		}
+}
+
+6.5 批量输入
+不幸的是，我们的srt_cli函数仍然不正确。在写完这个请求后我们不能立即关闭连接，因为管道中还有其它的请求和应答。
+问题的起因在于我们对标准输入中的EOF的的处理：str_cli函数就此返回到了main函数，而main函数随后终止。然而在批量
+输入方式下，标准输入中的EOF并不意味着我们同时也完成了从套接字的读入；可能仍有请求在去往服务器的陆上，或者仍有
+应答在返回的路上。
+我们需要一种关闭TCP连接一半的方法。也就是说，我们想给服务器发送一个FIN，告诉它我们已经完成了数据的发送，但是
+仍然保持套接字描述符打开以便读取。这由函数shutdown来完成。
+一般地说，为了提升性能而引入缓冲机制增加了网络应用的复杂性，上面代码就遭受这种复杂性之害。然而上面代码fgets只返回
+其中的第一行，其余行仍然在stdio缓冲区中。fgets返回的单个输入行写给服务器，随后select再次被调用以等待新的工作，而
+不管stdio缓冲区中还有额外的输入行待消费。究其原因，在于select不知道stdio使用了缓冲区
+
+6.6 shutdown函数
+终止网络连接的方法是调用close函数。不过close函数，不过close有两个限制，却可以使用shutdown来避免
+（1）close把描述符的引用计数减一，仅在该计数变为0时才关闭套接字。但是使用shutdown可以不管引用计数就激发TCP的正常
+连接终止序列。
+（2）close终止读和写两个方面数据的传送，既然TCP连接是全双工的，有时候我们需要告知对端我们已经完成了数据发送，即使对端
+仍然有数据要发送给我们
+#include <sys/socket.h>
+int shutdown(int sockfd, int howto);
+该函数的执行依赖于howto参数的值。
+SHUT_RD   关闭连接读这一半
+SHUT_WR   关闭连接写这一半
+SHUT_RDWR 关闭读半部和写半部
+
+
