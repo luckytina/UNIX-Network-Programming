@@ -44,7 +44,7 @@ const char *inet_ntop(int famuly, const void *addrptr, char *strptr, size_t len)
 		return (NULL);
 }
 
-3.8 scok_ntop和相关函数
+3.8 sock_ntop和相关函数
 这个函数是作者自己写的一个函数用于替代inet_ntop函数
 
 3.9 readn writen 和readline函数

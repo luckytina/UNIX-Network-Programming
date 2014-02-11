@@ -64,5 +64,91 @@ int main(int argc, int **argv)
 		servaddr.sin_addr.s_addr = htonl(INADDR_ANY);
 		servaddr.sin_port = htons(SERV_PORT);
 
-		bind(listenfd, (struct sockaddr *)&servaddr, sizeof(servaddr))
+		bind(listenfd, (struct sockaddr *)&servaddr, sizeof(servaddr));
+
+		listen(listenfd, LISTENQ);
+
+		maxfd = listenfd;
+
+		maxi = -1;
+
+		for(i = 0;i < FD_SETSIZE; i++)
+				client[i] = -1;
+
+		FD_ZERO(&allset);
+		FD_SET(listenfd, &allset);
+		for(;;)
+		{
+				rset = allset;
+				nready = select(maxfd + 1, &rset; NULL; NULL; NULL);
+
+				if(FD_ISSET(listenfd, &rset))
+				{
+						clilen = sizeof(cliaddr);
+						connfd = accept(listenfd, (struct sock *)&cliaddr, &clilen);
+
+						for(i = 0; i < FD_SETSIZE; i++)
+						{
+								if(client[i] < 0)
+								{
+										client[i] = connfd;
+										break;
+								}
+						}
+
+						if(i == FD_SETSIZE)
+								err_quit("too many clients");
+						FD_SET(cinnfd, &allset);
+						if(connfd > maxfd)
+								maxfd = connfd;
+						if(i > maxi)
+								maxi = i;
+
+
+						if(--nready <= 0)
+								continue;
+				}
+
+				for(i = 0; i <= maxi;i++)
+				{
+						if((sockfd = client[i]) < 0)
+							continue;
+						if(FD_ISSET(sockfd, &rset))
+						{
+								if(FD_ISSET(sockfd, &rset))
+								{
+										if((n = read(sockfd, buf, MAXLINE)) == 0)
+										{
+												close(sockfd);
+												FD_CLR(sockfd, &allset);
+												client[i] = -1;
+										}
+										else
+												write(sockfd, buf, n);
+
+										if(--nready <= 0)
+												break;
+								}
+						}
+				}
+		}
 }
+
+
+6.9 pselect
+
+6.10 poll函数
+#include <poll.h>
+int poll(struct pollfd *fdarray, unsigned long nfds, int timeout);
+
+struct poolfd
+{
+		int fd;
+		short events;
+		short reventd;
+}
+
+6.11 tcp回射服务器程序（再修订版）
+
+6.12 小结
+

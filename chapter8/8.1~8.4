@@ -1,0 +1,13 @@
+第8章 基本udp套接字编程
+8.1 概述
+udp客户/服务器程序所用套接字函数如图8-1所示
+
+8.2 recvfrom 和sendto函数
+#include <sys/socket.h>
+ssize_t recvfrom(int sockfd, void *buff, size_t nbytes, int flags, struct sockaddr *from, socklen_t *addrlen);
+ssize_t sendto(int sockfd, const void *buff, size_t nbytes, int flags, const struct sockaddr *to, socklen_t addrlen);
+recvfrom的前三个参数相当于tcp的read函数里面的参数，falg参数在后面要用到得时候再详细讲解
+sockaddr参数和socklen_t参数相当于tcp里面的accept参数返回值是所读数据的长度
+sendto函数的前三个返回值相当于tcp里面write函数里面的参数，后面两个函数相当于tcp里面connect函数
+里面的参数
+
