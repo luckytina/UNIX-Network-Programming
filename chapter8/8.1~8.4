@@ -11,3 +11,40 @@ sockaddr参数和socklen_t参数相当于tcp里面的accept参数返回值是所
 sendto函数的前三个返回值相当于tcp里面write函数里面的参数，后面两个函数相当于tcp里面connect函数
 里面的参数
 
+8.3 udp回射服务器程序：main函数
+int main(int argc, char **argv)
+{
+		int sockfd;
+		struct sockaddr_in servaddr, cliaddr;
+
+		sockfd = socket(AF_INET, SOCK_DGRAM, 0);
+
+		bzero(&servaddr, sizeof(servaddr));
+
+		servaddr.sin_family = AF_INET;
+
+		servaddr.sin_addr.s_addr = htonl(INADDR_ANY);
+
+		servaddr.sin_port = htons(SERV_PORT);
+
+		bind(sockfd, (SA *)&servaddr, sizeof(servaddr));
+
+		dg_echo(sockfd, (SA *)&cliaddr, sizeof(cliaddr));
+}
+
+8.4 udp回射服务器程序：dg_echo函数
+void dg_echo(int sockfd, SA *pcliaddr, socklen_t clilen)
+{
+		int n;
+		socklen_t len;
+		char msg[MAXLINE];
+
+		for(;;)
+		{
+				len = clilen;
+				n   = recvfrom(sockfd, mesg, MAXLINE, 0, pcliaddr, &len);
+
+				sendto(sockfd, mesg, n, 0, pcliaddr, len);
+		}
+}
+
