@@ -1,0 +1,37 @@
+8.5 udp回射客户程序：main函数
+int main(int argc, char **argv)
+{
+		int sockfd;
+		struct sockaddr_in servaddr;
+
+		if(argc != 2)
+				exit(0);
+		bzero(&servaddr, sizeof(servaddr));
+		servaddr.sin_family = AF_INET;
+		servaddr.sin_port   = htons(SERV_PORT);
+		inet_pton(AF_INET, argv[1], &servaddr.sin_addr);
+		sockfd = socket(AF_INET, SOCK_DGRAM, 0);
+		dg_cli(stdin, sockfd, (SA *)&servaddr, sizeof(servaddr));
+		exit(0);
+}
+
+8.6 udp回射客户程序：dg_cli函数
+void dg_cli(FILE *fp, int sockfd, const SA *pservaddr, socklen_t servlen)
+{
+	int n;
+	char sendline[MAXLINE], recvline[MAXLINE + 1];
+	while(fgets(sendline, MAXLINE, fp) != NULL)
+	{
+			sendto(sockfd, sendline, strlen(sendline), 0, pservaddr, servlen);
+			n = recvfrom(sockfd, recvline, MAXLINE, 0, NULL, NULL);
+			recvline[n] = 0;
+			fputs(recvline, stdout);
+	}
+}
+
+8.7 数据报的丢失
+如果一个客户数据丢失，客户将永远阻塞于dg_cli函数中的recvfrom函数调用。
+
+8.8 验证接受到的响应
+
+
