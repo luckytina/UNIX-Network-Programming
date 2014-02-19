@@ -1,0 +1,23 @@
+7.1概述
+很多方法可以用来获取和设置影响套接字的选项：
+getsockopt和setsockopt函数；
+fcntl函数
+ioctl函数
+
+7.2 getsockopt和setsockopt函数
+这两个函数仅用于套接字
+#include <sys/socket.h>
+int getsockopt(int sockfd, int level, int optname, void *optval, socklen_t *optlen);
+int setsockopt(int sockfd, int level, int optname, const void *optval, socklen_t optlen);
+其中sockfd必须指向一个打开的套接字描述符，level指定系统中解释选项的代码或未通用套接字代码，
+或为某个特定于协议的代码（ipv4, ipv6, tcp 或sctp）
+optval是一个指向某个变量的指针，setsockopt从*optval中选取选项待设置的新值，getsockopt则把
+已获得取的选项当前值存放到*optval中。*optval的大小由最后一个参数指定
+注意在*optval中是一个整数。*optval中返回的值为0则表示相应的选项被禁止，不为0则表示相应的选项被
+启用。
+
+7.3检查选项是否受支持并获取默认值
+
+7.4套接字状态
+
+

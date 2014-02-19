@@ -1,0 +1,5 @@
+#include <sys/socket.h>
+ssize_t recv(int sockfd, void *buff, size_t nbytes, int flags);
+ssize_t send(int sockfd, const void *buff, size_t nbytes, int flags);
+send和recv的前三个参数等同于read和write
+
